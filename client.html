@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Client</title>
+</head>
+<body>
+  <input id="msgBox"/>
+  <button id="btn">发送</button>
+  <div id="contact">
+    <div>会话：</div>
+  </div>
+  <script>
+    var ws = new WebSocket('ws://127.0.0.1:8001');
+    ws.onopen = function(e){
+      console.log("peng-连接服务器成功");
+      ws.send('start_peng');//建立一个WebSocket连接
+    }
+    ws.onclose = function(e){
+      console.log("服务器关闭");
+    }
+    ws.onerror = function(){
+      console.log("连接出错");
+    }
+    ws.onmessage = function (e) {
+      if(e.data !== 'start_peng' && e.data !== 'start_song') {
+        let p = document.createElement('p');
+        p.innerText = e.data;
+        document.getElementById('contact').append(p);
+      }
+    }
+    document.getElementById('btn').onclick = function () {
+      let msg = document.getElementById('msgBox').value;
+      document.getElementById('msgBox').value = '';
+      ws.send(msg);
+    }
+  </script>
+</body>
+</html>
